@@ -1,0 +1,5 @@
+{
+  "name": "AiServer",
+  "description": "A minimal skeleton for backend logic and services.",
+  "requestFramePermissions": []
+}

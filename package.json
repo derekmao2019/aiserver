@@ -1,0 +1,20 @@
+{
+  "name": "aiserver",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node AiServer.js",
+    "dev": "node --watch AiServer.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0"
+  }
+}
+
