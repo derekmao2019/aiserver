@@ -1,6 +1,7 @@
 import 'dotenv/config'; 
 import express from 'express';
 import cors from 'cors';
+import { buildGeminiFunctionCallPart, buildOpenAiFunctionToolCall } from './geminiCompat.js';
 
 const app = express();
 const PORT = 4000;
@@ -320,14 +321,8 @@ function toGeminiContent(message) {
 
     if (Array.isArray(message.tool_calls)) {
         for (const toolCall of message.tool_calls) {
-            const name = toolCall?.function?.name;
-            if (!name) continue;
-            parts.push({
-                functionCall: {
-                    name,
-                    args: parseJsonObject(toolCall.function?.arguments)
-                }
-            });
+            const part = buildGeminiFunctionCallPart(toolCall);
+            if (part) parts.push(part);
         }
     }
 
@@ -358,16 +353,7 @@ function fromGeminiGenerateResponse(data, requestedModel) {
         .join('');
     const toolCalls = parts
         .map((part, index) => {
-            const call = part?.functionCall;
-            if (!call?.name) return null;
-            return {
-                id: `call_${Date.now()}_${index}`,
-                type: 'function',
-                function: {
-                    name: call.name,
-                    arguments: JSON.stringify(call.args || {})
-                }
-            };
+            return buildOpenAiFunctionToolCall(part, `call_${Date.now()}_${index}`);
         })
         .filter(Boolean);
 
